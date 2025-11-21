@@ -60,6 +60,10 @@ def validate_csv_structure(filename: str) -> bool:
                     
                     # Check for additional credit account
                     if row.get('credit_amount_2'):
+                        if not row.get('credit_account_2'):
+                            print(f"❌ Missing credit_account_2 for transaction {idx} with credit_amount_2")
+                            error_count += 1
+                            continue
                         credit_amt += Decimal(str(row['credit_amount_2']))
                     
                     total_debits += debit_amt

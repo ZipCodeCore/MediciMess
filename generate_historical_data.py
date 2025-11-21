@@ -103,7 +103,8 @@ class TransactionGenerator:
         base = random.uniform(min_amount, max_amount)
         factor = random.choice([1, 1, 1, 2, 5, 10, 20, 50])  # Weighted toward smaller multipliers
         amount = base * factor
-        return Decimal(str(round(amount, 2)))
+        # Use Decimal.quantize for precise decimal handling
+        return Decimal(str(amount)).quantize(Decimal('0.01'))
     
     def generate_papal_deposit(self, transaction_date: date) -> Dict:
         """Generate papal banking deposits (major income source)"""
@@ -164,8 +165,9 @@ class TransactionGenerator:
         counterparty = random.choice(self.nobles if is_noble else self.merchants)
         
         principal = self.random_amount(100, 10000)
-        interest_rate = random.uniform(0.08, 0.25)  # 8-25% interest (historically accurate)
-        interest = principal * Decimal(str(interest_rate))
+        # Generate interest rate as Decimal to avoid floating-point precision issues
+        interest_rate = Decimal(random.randint(8, 25)) / Decimal('100')  # 8-25% interest
+        interest = principal * interest_rate
         total = principal + interest
         
         return {
@@ -233,8 +235,9 @@ class TransactionGenerator:
         to_branch = random.choice([b for b in self.branches if b != from_branch])
         amount = self.random_amount(500, 20000)
         
-        # Small exchange fee (profit center)
-        fee = amount * Decimal(str(random.uniform(0.01, 0.03)))
+        # Small exchange fee (profit center) - use Decimal for precision
+        fee_rate = Decimal(random.randint(100, 300)) / Decimal('10000')  # 1-3% fee
+        fee = amount * fee_rate
         
         return {
             "id": self.transaction_id,
@@ -427,7 +430,8 @@ class TransactionGenerator:
                 self.transaction_id += 1
                 transactions.append(trans)
                 
-            except Exception as e:
+            except (ValueError, KeyError) as e:
+                # Specific exceptions for transaction generation failures
                 print(f"Error generating {trans_type}: {e}")
                 continue
         
