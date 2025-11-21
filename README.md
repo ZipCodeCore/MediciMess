@@ -39,6 +39,7 @@ Assets = Liabilities + Equity
 - ✅ Income Statement reporting
 - ✅ Decimal precision for accurate financial calculations
 - ✅ Historical simulation of Medici Bank operations (1397)
+- ✅ **20,000 historical transactions dataset** (1390-1440) based on real events
 
 ## Requirements
 
@@ -113,6 +114,29 @@ The Medici family dominated banking in Florence during the 15th century. They pi
 - Letters of credit
 
 This simulation honors their legacy by implementing the same fundamental accounting principles they used to build one of history's greatest banking dynasties.
+
+## Historical Transaction Dataset
+
+This repository includes a dataset of **20,000 historically-themed transactions** covering the period 1390-1440, based on actual events from the Medici Bank's operations:
+
+- **Western Schism and Papal Banking** (1402-1420s)
+- **Council of Constance** - Including the famous 35,000 florin ransom for Pope John XXIII (1415)
+- **Florentine-Milanese Wars** (1390-1402, 1422-1426)
+- **Wars in Lombardy** (1423-1454)
+- **Alum trade** from papal monopoly mines
+- Regular banking operations across 8 branch locations
+
+### Using the Historical Data
+
+```bash
+# Generate the transaction dataset
+python3 generate_historical_data.py
+
+# Validate the generated data
+python3 validate_transactions.py
+```
+
+For detailed information about the transaction data, see [TRANSACTION_DATA.md](TRANSACTION_DATA.md).
 
 ## License
 
