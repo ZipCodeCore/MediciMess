@@ -29,10 +29,12 @@ property acquisition, and operating expenses.
 """
 
 from decimal import Decimal, ROUND_HALF_UP
-from datetime import date
+from datetime import date, datetime
 from enum import Enum, auto
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Optional
 from dataclasses import dataclass, field
+import csv
+import json
 
 
 class AccountType(Enum):
@@ -152,12 +154,20 @@ class Ledger:
         self.name = name
         self.accounts: List[Account] = []
         self.transactions: List[Transaction] = []
+        self._silent_mode = False  # Flag for suppressing transaction output
     
     def create_account(self, name: str, account_type: AccountType) -> Account:
         """Create a new account and add it to the ledger"""
         account = Account(name, account_type)
         self.accounts.append(account)
         return account
+    
+    def get_or_create_account(self, name: str, account_type: AccountType) -> Account:
+        """Get an existing account by name or create a new one if it doesn't exist"""
+        for account in self.accounts:
+            if account.name == name:
+                return account
+        return self.create_account(name, account_type)
     
     def record_transaction(self, date: date, description: str, 
                           *entries: TransactionEntry) -> None:
@@ -195,7 +205,10 @@ class Ledger:
         
         # Record the transaction in the ledger
         self.transactions.append(transaction)
-        print(transaction)
+        
+        # Print only if not in silent mode
+        if not self._silent_mode:
+            print(transaction)
     
     def print_trial_balance(self) -> None:
         """Prints a trial balance to verify that debits = credits across all accounts"""
@@ -319,6 +332,262 @@ class Ledger:
         print(f"{'Total Expenses':<30} {total_expenses.quantize(Decimal('0.01')):>10}")
         print("-" * 40)
         print(f"{'NET INCOME':<30} {net_income.quantize(Decimal('0.01')):>10}")
+    
+    def export_transactions_to_csv(self, filename: str) -> int:
+        """
+        Export all transactions to a CSV file
+        
+        Args:
+            filename: Path to the CSV file to create
+            
+        Returns:
+            Number of transactions exported
+        """
+        with open(filename, 'w', newline='', encoding='utf-8') as csvfile:
+            fieldnames = [
+                'id', 'date', 'description', 'debit_account', 'debit_amount',
+                'credit_account', 'credit_amount', 'credit_account_2', 'credit_amount_2'
+            ]
+            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+            writer.writeheader()
+            
+            for idx, transaction in enumerate(self.transactions, 1):
+                # Get the total debits and credits
+                total_debits = sum(entry.amount for entry in transaction.debits)
+                total_credits = sum(entry.amount for entry in transaction.credits)
+                
+                # Format the transaction for CSV
+                row = {
+                    'id': idx,
+                    'date': transaction.date.isoformat(),
+                    'description': transaction.description,
+                    'debit_account': ', '.join([entry.account.name for entry in transaction.debits]),
+                    'debit_amount': str(total_debits),
+                    'credit_account': transaction.credits[0].account.name if transaction.credits else '',
+                    'credit_amount': str(transaction.credits[0].amount) if transaction.credits else '0',
+                    'credit_account_2': transaction.credits[1].account.name if len(transaction.credits) > 1 else '',
+                    'credit_amount_2': str(transaction.credits[1].amount) if len(transaction.credits) > 1 else ''
+                }
+                writer.writerow(row)
+        
+        return len(self.transactions)
+    
+    def export_transactions_to_json(self, filename: str) -> int:
+        """
+        Export all transactions to a JSON file
+        
+        Args:
+            filename: Path to the JSON file to create
+            
+        Returns:
+            Number of transactions exported
+        """
+        transactions_data = []
+        
+        for idx, transaction in enumerate(self.transactions, 1):
+            trans_dict = {
+                'id': idx,
+                'date': transaction.date.isoformat(),
+                'description': transaction.description,
+                'debits': [
+                    {
+                        'account': entry.account.name,
+                        'account_type': entry.account.type.name,
+                        'amount': str(entry.amount)
+                    }
+                    for entry in transaction.debits
+                ],
+                'credits': [
+                    {
+                        'account': entry.account.name,
+                        'account_type': entry.account.type.name,
+                        'amount': str(entry.amount)
+                    }
+                    for entry in transaction.credits
+                ]
+            }
+            transactions_data.append(trans_dict)
+        
+        with open(filename, 'w', encoding='utf-8') as jsonfile:
+            json.dump(transactions_data, jsonfile, indent=2)
+        
+        return len(self.transactions)
+    
+    def import_transactions_from_csv(self, filename: str, verbose: bool = False) -> int:
+        """
+        Import transactions from a CSV file
+        
+        Args:
+            filename: Path to the CSV file to import
+            verbose: If True, print each transaction as it's imported
+            
+        Returns:
+            Number of transactions imported
+        """
+        count = 0
+        row_num = 1  # Track row number (1 = header)
+        
+        with open(filename, 'r', encoding='utf-8') as csvfile:
+            reader = csv.DictReader(csvfile)
+            
+            for row in reader:
+                row_num += 1
+                try:
+                    # Parse the transaction date
+                    trans_date = datetime.fromisoformat(row['date']).date()
+                    description = row['description']
+                    
+                    # Parse debit entries
+                    debit_accounts = [acc.strip() for acc in row.get('debit_account', '').split(',') if acc.strip()]
+                    debit_amount = Decimal(row.get('debit_amount', '0'))
+                    
+                    # Parse credit entries
+                    credit_account = row.get('credit_account', '').strip()
+                    credit_amount = Decimal(row.get('credit_amount', '0'))
+                    credit_account_2 = row.get('credit_account_2', '').strip()
+                    credit_amount_2 = Decimal(row.get('credit_amount_2', '0')) if row.get('credit_amount_2') else Decimal('0')
+                    
+                    # Create the transaction directly
+                    transaction = Transaction(trans_date, description)
+                    
+                    # Add debit entries
+                    # Note: CSV format doesn't track individual debit amounts, so we
+                    # distribute the total equally. For precise multi-debit transactions,
+                    # use JSON format which preserves individual amounts.
+                    for debit_acc_name in debit_accounts:
+                        account_type = self._infer_account_type(debit_acc_name)
+                        debit_account = self.get_or_create_account(debit_acc_name, account_type)
+                        transaction.add_debit(TransactionEntry(debit_account, debit_amount / len(debit_accounts)))
+                    
+                    # Add credit entries
+                    if credit_account:
+                        account_type = self._infer_account_type(credit_account)
+                        credit_acc = self.get_or_create_account(credit_account, account_type)
+                        transaction.add_credit(TransactionEntry(credit_acc, credit_amount))
+                    
+                    if credit_account_2 and credit_amount_2 > 0:
+                        account_type = self._infer_account_type(credit_account_2)
+                        credit_acc_2 = self.get_or_create_account(credit_account_2, account_type)
+                        transaction.add_credit(TransactionEntry(credit_acc_2, credit_amount_2))
+                    
+                    # Verify that the transaction is balanced
+                    if not transaction.is_balanced():
+                        raise ValueError("Transaction is not balanced: debits must equal credits")
+                    
+                    # Post the transaction to update account balances
+                    transaction.post()
+                    
+                    # Record the transaction in the ledger
+                    self.transactions.append(transaction)
+                    
+                    # Print if verbose
+                    if verbose:
+                        print(transaction)
+                    
+                    count += 1
+                    
+                except (ValueError, KeyError) as e:
+                    if verbose:
+                        print(f"Warning: Skipping invalid transaction at row {row_num}: {e}")
+                    continue
+        
+        return count
+    
+    def import_transactions_from_json(self, filename: str, verbose: bool = False) -> int:
+        """
+        Import transactions from a JSON file
+        
+        Args:
+            filename: Path to the JSON file to import
+            verbose: If True, print each transaction as it's imported
+            
+        Returns:
+            Number of transactions imported
+        """
+        count = 0
+        
+        with open(filename, 'r', encoding='utf-8') as jsonfile:
+            transactions_data = json.load(jsonfile)
+        
+        for trans_dict in transactions_data:
+            try:
+                # Parse the transaction
+                trans_date = datetime.fromisoformat(trans_dict['date']).date()
+                description = trans_dict['description']
+                
+                # Create the transaction directly
+                transaction = Transaction(trans_date, description)
+                
+                # Add debit entries
+                for debit_entry in trans_dict.get('debits', []):
+                    account_type = AccountType[debit_entry['account_type']]
+                    debit_account = self.get_or_create_account(debit_entry['account'], account_type)
+                    amount = Decimal(debit_entry['amount'])
+                    transaction.add_debit(TransactionEntry(debit_account, amount))
+                
+                # Add credit entries
+                for credit_entry in trans_dict.get('credits', []):
+                    account_type = AccountType[credit_entry['account_type']]
+                    credit_account = self.get_or_create_account(credit_entry['account'], account_type)
+                    amount = Decimal(credit_entry['amount'])
+                    transaction.add_credit(TransactionEntry(credit_account, amount))
+                
+                # Verify that the transaction is balanced
+                if not transaction.is_balanced():
+                    raise ValueError("Transaction is not balanced: debits must equal credits")
+                
+                # Post the transaction to update account balances
+                transaction.post()
+                
+                # Record the transaction in the ledger
+                self.transactions.append(transaction)
+                
+                # Print if verbose
+                if verbose:
+                    print(transaction)
+                
+                count += 1
+                
+            except (ValueError, KeyError) as e:
+                if verbose:
+                    print(f"Warning: Skipping invalid transaction: {e}")
+                continue
+        
+        return count
+    
+    def _infer_account_type(self, account_name: str) -> AccountType:
+        """
+        Infer the account type from the account name
+        This is a heuristic-based approach for CSV imports where type isn't explicit.
+        
+        Note: Defaults to ASSET if account type cannot be determined. This is a safe
+        default for unknown accounts as most banking transactions involve asset accounts.
+        For precise type control, use JSON import which preserves account types.
+        """
+        name_lower = account_name.lower()
+        
+        # Asset accounts
+        if any(keyword in name_lower for keyword in ['cash', 'receivable', 'inventory', 'land', 'building', 'equipment', 'asset']):
+            return AccountType.ASSET
+        
+        # Liability accounts
+        if any(keyword in name_lower for keyword in ['payable', 'loan', 'debt', 'liability', 'deposits payable']):
+            return AccountType.LIABILITY
+        
+        # Equity accounts
+        if any(keyword in name_lower for keyword in ['capital', 'equity', 'retained earnings', 'owner']):
+            return AccountType.EQUITY
+        
+        # Revenue accounts
+        if any(keyword in name_lower for keyword in ['revenue', 'income', 'sales', 'interest income', 'fee']):
+            return AccountType.REVENUE
+        
+        # Expense accounts
+        if any(keyword in name_lower for keyword in ['expense', 'wages', 'rent', 'supplies', 'maintenance', 'courier', 'cost']):
+            return AccountType.EXPENSE
+        
+        # Default to ASSET if we can't determine
+        return AccountType.ASSET
 
 
 def main():
