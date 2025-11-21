@@ -40,6 +40,7 @@ Assets = Liabilities + Equity
 - ✅ Decimal precision for accurate financial calculations
 - ✅ Historical simulation of Medici Bank operations (1397)
 - ✅ **20,000 historical transactions dataset** (1390-1440) based on real events
+- ✅ **Import/Export transaction data** in CSV and JSON formats
 
 ## Requirements
 
@@ -137,6 +138,106 @@ python3 validate_transactions.py
 ```
 
 For detailed information about the transaction data, see [TRANSACTION_DATA.md](TRANSACTION_DATA.md).
+
+## Importing and Exporting Transaction Data
+
+The Medici Bank ledger system supports importing and exporting large volumes of transaction data in both CSV and JSON formats. This makes it easy to:
+- Backup your ledger data
+- Transfer data between systems
+- Analyze transactions in spreadsheets
+- Load historical datasets
+
+### Quick Start
+
+```bash
+# Run the import/export demonstration
+python3 demo_import_export.py
+```
+
+This interactive demo will show you how to:
+1. Export transactions to CSV and JSON files
+2. Import transactions from CSV and JSON files
+3. Import the full 20,000 transaction historical dataset
+4. Verify that all imported data maintains double-entry accounting principles
+
+### API Usage
+
+#### Exporting Transactions
+
+```python
+from medici_banking import Ledger, AccountType, TransactionEntry
+from decimal import Decimal
+from datetime import date
+
+# Create a ledger with some transactions
+ledger = Ledger("My Bank")
+cash = ledger.create_account("Cash", AccountType.ASSET)
+capital = ledger.create_account("Owner's Capital", AccountType.EQUITY)
+
+ledger.record_transaction(
+    date(2024, 1, 1),
+    "Initial investment",
+    TransactionEntry(cash, Decimal("10000.00")),
+    TransactionEntry(capital, Decimal("10000.00"))
+)
+
+# Export to CSV
+ledger.export_transactions_to_csv("my_transactions.csv")
+
+# Export to JSON
+ledger.export_transactions_to_json("my_transactions.json")
+```
+
+#### Importing Transactions
+
+```python
+# Create a new ledger
+ledger = Ledger("Import Demo")
+
+# Import from CSV (silent mode)
+count = ledger.import_transactions_from_csv("my_transactions.csv")
+print(f"Imported {count} transactions")
+
+# Import from JSON (verbose mode - prints each transaction)
+count = ledger.import_transactions_from_json("my_transactions.json", verbose=True)
+
+# Verify the books are balanced
+ledger.print_trial_balance()
+```
+
+### File Formats
+
+#### CSV Format
+```csv
+id,date,description,debit_account,debit_amount,credit_account,credit_amount,credit_account_2,credit_amount_2
+1,2024-01-01,Initial investment,Cash,10000.00,Owner's Capital,10000.00,,
+2,2024-01-15,Service revenue,Cash,1500.00,Service Revenue,1500.00,,
+```
+
+#### JSON Format
+```json
+[
+  {
+    "id": 1,
+    "date": "2024-01-01",
+    "description": "Initial investment",
+    "debits": [
+      {"account": "Cash", "account_type": "ASSET", "amount": "10000.00"}
+    ],
+    "credits": [
+      {"account": "Owner's Capital", "account_type": "EQUITY", "amount": "10000.00"}
+    ]
+  }
+]
+```
+
+### Features
+
+- **Automatic Account Creation**: Accounts are automatically created during import if they don't exist
+- **Account Type Inference**: For CSV imports, account types are inferred from account names
+- **Transaction Validation**: All imported transactions are validated to ensure debits equal credits
+- **Batch Processing**: Efficiently handles large datasets (tested with 20,000+ transactions)
+- **Silent/Verbose Modes**: Control whether transactions are printed during import
 
 ## License
 
