@@ -1,7 +1,7 @@
 """
 Medici Banking System - Double-Entry Accounting in Python
 
-This implementation showcases the core principles of double-entry accounting, using ducats as
+This implementation showcases the core principles of double-entry accounting, using florins as
 the currency in honor of the Medici banking dynasty. Here's what the code demonstrates:
 
 1. **The Fundamental Principle**: Every transaction affects at least two accounts
@@ -84,7 +84,7 @@ class Account:
             self._balance += amount
     
     def __str__(self) -> str:
-        return f"{self.name} ({self.type.name}): {self._balance} ducats"
+        return f"{self.name} ({self.type.name}): {self._balance} florins"
     
     def __repr__(self) -> str:
         return f"Account('{self.name}', {self.type})"
@@ -138,11 +138,11 @@ class Transaction:
         
         lines.append("  Debits:")
         for entry in self.debits:
-            lines.append(f"    {entry.account.name}: {entry.amount} ducats")
+            lines.append(f"    {entry.account.name}: {entry.amount} florins")
         
         lines.append("  Credits:")
         for entry in self.credits:
-            lines.append(f"    {entry.account.name}: {entry.amount} ducats")
+            lines.append(f"    {entry.account.name}: {entry.amount} florins")
         
         return '\n'.join(lines)
 
@@ -215,7 +215,7 @@ class Ledger:
         total_debits = Decimal('0')
         total_credits = Decimal('0')
         
-        print(f"{'Account':<30} {'Debit (Ducats)':<15} {'Credit (Ducats)':<15}")
+        print(f"{'Account':<30} {'Debit (Florins)':<15} {'Credit (Florins)':<15}")
         print("-" * 60)
         
         for account in self.accounts:

@@ -4,7 +4,7 @@ A Python implementation of double-entry bookkeeping inspired by the Medici banki
 
 ## Overview
 
-MediciMess is an educational project that demonstrates the fundamental principles of double-entry accounting through a simulation of the Medici Bank's operations in 1397. The implementation uses ducats as the currency in honor of the historical Medici banking dynasty.
+MediciMess is an educational project that demonstrates the fundamental principles of double-entry accounting through a simulation of the Medici Bank's operations in 1397. The implementation uses florins as the currency in honor of the historical Medici banking dynasty.
 
 This project showcases how double-entry accounting works - a system where every financial transaction affects at least two accounts, and the sum of debits must always equal the sum of credits.
 
@@ -64,11 +64,11 @@ python3 medici-banking.py
 
 The main script demonstrates a series of banking transactions from the year 1397:
 
-1. **Initial Capitalization**: Giovanni de' Medici invests 10,000 ducats
-2. **Loan Issuance**: A 2,000 ducat loan to a wool merchant
-3. **Loan Repayment**: Partial repayment with interest (200 ducats)
-4. **Asset Purchase**: Acquisition of land for a new banking house (3,000 ducats)
-5. **Operating Expenses**: Quarterly wages for bank employees (800 ducats)
+1. **Initial Capitalization**: Giovanni de' Medici invests 10,000 florins
+2. **Loan Issuance**: A 2,000 florin loan to a wool merchant
+3. **Loan Repayment**: Partial repayment with interest (200 florins)
+4. **Asset Purchase**: Acquisition of land for a new banking house (3,000 florins)
+5. **Operating Expenses**: Quarterly wages for bank employees (800 florins)
 
 ### Example Output
 
