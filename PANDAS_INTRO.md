@@ -1,14 +1,16 @@
-## **Pandas Learning Plan: Analyzing Medici Bank Transactions**
+## Pandas Learning Plan: Analyzing Medici Bank Transactions
 
-### **Course Structure Overview**
+### Course Structure Overview
 
 This plan uses the 20,000 historical transactions (1390-1440) as a rich, real-world dataset to teach Pandas fundamentals through progressively complex analyses.
 
 ---
 
-### **Module 1: Introduction & Data Loading **
+### Module 1: Introduction & Data Loading 
 
 **Learning Objectives:**
+
+- Make a special git branch to hold all the changes to the dataset
 - Understand what Pandas is and why it's essential for data engineering
 - Load CSV and JSON data into DataFrames
 - Explore basic DataFrame properties
@@ -33,7 +35,7 @@ This plan uses the 20,000 historical transactions (1390-1440) as a rich, real-wo
 
 ---
 
-### **Module 2: Data Inspection & Cleaning **
+### Module 2: Data Inspection & Cleaning 
 
 **Learning Objectives:**
 - Handle data types (especially dates and decimals)
@@ -60,7 +62,7 @@ This plan uses the 20,000 historical transactions (1390-1440) as a rich, real-wo
 
 ---
 
-### **Module 3: Basic Analysis & Aggregation **
+### Module 3: Basic Analysis & Aggregation 
 
 **Learning Objectives:**
 - Filter and select data
@@ -89,7 +91,7 @@ This plan uses the 20,000 historical transactions (1390-1440) as a rich, real-wo
 
 ---
 
-### **Module 4: Time Series Analysis **
+### Module 4: Time Series Analysis 
 
 **Learning Objectives:**
 - Work with datetime indices
@@ -118,7 +120,7 @@ This plan uses the 20,000 historical transactions (1390-1440) as a rich, real-wo
 
 ---
 
-### **Module 5: Advanced Filtering & Queries **
+### Module 5: Advanced Filtering & Queries 
 
 **Learning Objectives:**
 - Complex boolean indexing
@@ -143,7 +145,7 @@ This plan uses the 20,000 historical transactions (1390-1440) as a rich, real-wo
 
 ---
 
-### **Module 6: Data Transformation & Feature Engineering **
+### Module 6: Data Transformation & Feature Engineering 
 
 **Learning Objectives:**
 - Create calculated columns
@@ -173,7 +175,7 @@ This plan uses the 20,000 historical transactions (1390-1440) as a rich, real-wo
 
 ---
 
-### **Module 7: Data Visualization Integration **
+### Module 7: Data Visualization Integration 
 
 **Learning Objectives:**
 - Use Pandas plotting capabilities
@@ -198,7 +200,7 @@ This plan uses the 20,000 historical transactions (1390-1440) as a rich, real-wo
 
 ---
 
-### **Module 8: Performance & Best Practices **
+### Module 8: Performance & Best Practices 
 
 **Learning Objectives:**
 - Optimize Pandas operations
@@ -223,7 +225,7 @@ This plan uses the 20,000 historical transactions (1390-1440) as a rich, real-wo
 
 ---
 
-### **Capstone Project: Comprehensive Analysis **
+### Capstone Project: Comprehensive Analysis 
 
 **Project:** Create a complete analytical report on Medici Bank operations
 
