@@ -425,11 +425,13 @@ class Ledger:
             Number of transactions imported
         """
         count = 0
+        row_num = 1  # Track row number (1 = header)
         
         with open(filename, 'r', encoding='utf-8') as csvfile:
             reader = csv.DictReader(csvfile)
             
             for row in reader:
+                row_num += 1
                 try:
                     # Parse the transaction date
                     trans_date = datetime.fromisoformat(row['date']).date()
@@ -449,6 +451,9 @@ class Ledger:
                     transaction = Transaction(trans_date, description)
                     
                     # Add debit entries
+                    # Note: CSV format doesn't track individual debit amounts, so we
+                    # distribute the total equally. For precise multi-debit transactions,
+                    # use JSON format which preserves individual amounts.
                     for debit_acc_name in debit_accounts:
                         account_type = self._infer_account_type(debit_acc_name)
                         debit_account = self.get_or_create_account(debit_acc_name, account_type)
@@ -483,7 +488,7 @@ class Ledger:
                     
                 except (ValueError, KeyError) as e:
                     if verbose:
-                        print(f"Warning: Skipping invalid transaction at row {count + 2}: {e}")
+                        print(f"Warning: Skipping invalid transaction at row {row_num}: {e}")
                     continue
         
         return count
@@ -553,7 +558,11 @@ class Ledger:
     def _infer_account_type(self, account_name: str) -> AccountType:
         """
         Infer the account type from the account name
-        This is a heuristic-based approach for CSV imports
+        This is a heuristic-based approach for CSV imports where type isn't explicit.
+        
+        Note: Defaults to ASSET if account type cannot be determined. This is a safe
+        default for unknown accounts as most banking transactions involve asset accounts.
+        For precise type control, use JSON import which preserves account types.
         """
         name_lower = account_name.lower()
         

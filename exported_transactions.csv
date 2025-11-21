@@ -1,4 +1,0 @@
-id,date,description,debit_account,debit_amount,credit_account,credit_amount,credit_account_2,credit_amount_2
-1,2024-01-01,Initial capital investment,Cash,10000.00,Owner's Capital,10000.00,,
-2,2024-01-15,Service revenue received,Cash,1500.00,Service Revenue,1500.00,,
-3,2024-01-30,Operating expenses paid,Operating Expenses,500.00,Cash,500.00,,
