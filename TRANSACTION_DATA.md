@@ -2,18 +2,23 @@
 
 ## Overview
 
-This directory contains approximately 20,000 historically-themed banking transactions generated based on actual events from the Medici Bank's operations during 1390-1440. The data represents major financial and political events in Renaissance Italy.
+This directory contains approximately **80,000 historically-themed banking transactions** generated based on actual events from the Medici Bank's operations during 1390-1440. The data represents major financial and political events in Renaissance Italy.
+
+The dataset was expanded from the original 20,000 transactions by running `generate_additional_data.py`, which:
+- Appended 60,000 more legitimate transactions (same historical distribution)
+- Injected a hidden embezzlement trail (~230 transactions, ~95,610 florins, 1420–1424) for forensic analysis exercises
 
 ## Files
 
 ### Generated Data Files
 
-- **`medici_transactions.csv`** (2.9 MB) - Transaction data in CSV format
-- **`medici_transactions.json`** (7.2 MB) - Transaction data in JSON format
+- **`medici_transactions.csv`** (~11 MB) - Transaction data in CSV format (~80,000 rows)
+- **`medici_transactions.json`** (~29 MB) - Transaction data in JSON format (~80,000 records)
 
 ### Scripts
 
-- **`generate_historical_data.py`** - Script to generate the historical transaction data
+- **`generate_historical_data.py`** - Script to generate the initial 20,000 historical transactions
+- **`generate_additional_data.py`** - Script to expand to 80,000+ transactions and inject the embezzlement trail
 - **`validate_transactions.py`** - Script to validate the generated data
 
 ## Data Structure
@@ -83,11 +88,8 @@ The data is based on real historical events:
 ## Data Validation
 
 All transactions maintain proper double-entry accounting:
-- **Total Debits**: 5,477,947,474.87 florins
-- **Total Credits**: 5,477,947,474.87 florins
-- **Difference**: 0.00 florins ✓
-
-Every transaction is perfectly balanced (debits = credits).
+- **Total Transactions**: ~80,230
+- Every transaction is perfectly balanced (debits = credits).
 
 ## Usage
 
@@ -165,6 +167,18 @@ The data is designed to reflect:
 - ✓ Major historical events (Council of Constance ransom)
 - ✓ Banking innovations (bills of exchange)
 - ✓ Papal monopolies (alum trade)
+
+## Hidden Forensic Exercise
+
+The dataset includes a deliberately embedded embezzlement scenario for use in data engineering and forensic analysis exercises. A fictitious supplier named "Ser Benedetto Forniture" appears in the Florence branch operating expense records between 1420 and 1424, representing ~230 fraudulent transactions totalling approximately 95,610 florins.
+
+The fraud is designed to be **plausible on casual inspection** but **detectable through simple statistical analysis**, including:
+- Benford's Law analysis of first digits
+- Vendor concentration analysis
+- Round-number clustering
+- Payment frequency analysis
+
+**For instructors**: Full details of the scheme, detection methods, discussion questions, and grading rubric are in [`INSTRUCTOR_EMBEZZLEMENT_GUIDE.md`](INSTRUCTOR_EMBEZZLEMENT_GUIDE.md). **Do not distribute to students before the exercise.**
 
 ## Integration with Existing Code
 
