@@ -39,8 +39,11 @@ Assets = Liabilities + Equity
 - ✅ Income Statement reporting
 - ✅ Decimal precision for accurate financial calculations
 - ✅ Historical simulation of Medici Bank operations (1397)
-- ✅ **20,000 historical transactions dataset** (1390-1440) based on real events
+- ✅ **80,000+ historical transactions dataset** (1390-1440) based on real events
 - ✅ **Import/Export transaction data** in CSV and JSON formats
+- ✅ **Branch Operations Dashboard UI Specification** for senior bank officials
+- ✅ **Data Pipeline Specification** for metrics computation and anomaly detection
+- ✅ **Hidden embezzlement scenario** for forensic data analysis exercises
 
 ## Requirements
 
@@ -118,7 +121,7 @@ This simulation honors their legacy by implementing the same fundamental account
 
 ## Historical Transaction Dataset
 
-This repository includes a dataset of **20,000 historically-themed transactions** covering the period 1390-1440, based on actual events from the Medici Bank's operations:
+This repository includes a dataset of **80,000+ historically-themed transactions** covering the period 1390-1440, based on actual events from the Medici Bank's operations:
 
 - **Western Schism and Papal Banking** (1402-1420s)
 - **Council of Constance** - Including the famous 35,000 florin ransom for Pope John XXIII (1415)
@@ -130,8 +133,11 @@ This repository includes a dataset of **20,000 historically-themed transactions*
 ### Using the Historical Data
 
 ```bash
-# Generate the transaction dataset
+# Generate the initial 20,000 transaction dataset
 python3 generate_historical_data.py
+
+# Expand to 80,000+ transactions and inject the embezzlement trail
+python3 generate_additional_data.py
 
 # Validate the generated data
 python3 validate_transactions.py
@@ -157,7 +163,7 @@ python3 demo_import_export.py
 This interactive demo will show you how to:
 1. Export transactions to CSV and JSON files
 2. Import transactions from CSV and JSON files
-3. Import the full 20,000 transaction historical dataset
+3. Import the full 80,000+ transaction historical dataset
 4. Verify that all imported data maintains double-entry accounting principles
 
 ### API Usage
@@ -236,12 +242,57 @@ id,date,description,debit_account,debit_amount,credit_account,credit_amount,cred
 - **Automatic Account Creation**: Accounts are automatically created during import if they don't exist
 - **Account Type Inference**: For CSV imports, account types are inferred from account names
 - **Transaction Validation**: All imported transactions are validated to ensure debits equal credits
-- **Batch Processing**: Efficiently handles large datasets (tested with 20,000+ transactions)
+- **Batch Processing**: Efficiently handles large datasets (tested with 80,000+ transactions)
 - **Silent/Verbose Modes**: Control whether transactions are printed during import
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+Copyright (c) 2025 Zip Code Wilmington Core
+
+## Advanced Lab Components
+
+This repository includes three additional components that extend the project into more complex data engineering and analysis topics:
+
+### Branch Operations Dashboard UI Specification
+
+[`BRANCH_OPS_UI_SPEC.md`](BRANCH_OPS_UI_SPEC.md) specifies a web-based dashboard for senior Medici Bank officials. It defines:
+
+- KPI panels (cash position, loan portfolio, net income, alerts)
+- Transaction ledger view with search and filter
+- Cash flow charts and trend views
+- Anomaly and alert panel
+- Role-based access control requirements
+- Wireframe layout and color palette
+
+This is a **specification document only** — it defines what to analyze, design, and build, not how.
+
+### Data Pipeline Specification
+
+[`DATA_PIPELINE_SPEC.md`](DATA_PIPELINE_SPEC.md) specifies the back-end data engineering pipeline that feeds the dashboard. It defines:
+
+- Ingestion, transformation, and serving layers
+- KPI computation formulas (cash, loans, expenses, revenue, net income)
+- Seven anomaly-detection rules including Benford's Law, vendor concentration, duplicate detection, and round-number clustering
+- Alert record schema
+- REST API endpoint definitions
+- Testing requirements and technology options
+
+This is a **specification document only**.
+
+### Forensic Data Analysis — Hidden Embezzlement Scenario
+
+The `medici_transactions.csv` dataset contains a hidden embezzlement trail embedded within the Florence branch operating expenses (1420–1424). The scheme involves approximately 100,000 florins channelled through a fictitious supplier over five years.
+
+Students are expected to:
+
+1. Load the dataset using pandas or a similar tool
+2. Apply forensic analysis techniques (Benford's Law, vendor concentration, frequency analysis) to identify the fraudulent transactions
+3. Quantify the total amount and date range of the fraud
+4. Recommend internal controls that would have prevented it
+
+**For instructors**: See [`INSTRUCTOR_EMBEZZLEMENT_GUIDE.md`](INSTRUCTOR_EMBEZZLEMENT_GUIDE.md) for the full description of the crime, detection methods, discussion questions, and grading rubric. **Do not distribute this file to students before the exercise.**
 
 Copyright (c) 2025 Zip Code Wilmington Core
 
