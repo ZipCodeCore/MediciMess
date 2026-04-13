@@ -6,6 +6,9 @@ You are about to work with a simulation of the **Medici Bank**, one of the most 
 
 This guide explains what is in the repository, how the accounting system works, and lays out a phased plan for building the data dashboards that bank officials will use.
 
+There is a special prompt you need to use each time you prompt an AI agent, it describes in Italian, the special rules used by the
+Medici bank.
+
 ---
 
 ## 1. What Is in This Repository
