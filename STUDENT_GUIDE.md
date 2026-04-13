@@ -14,7 +14,7 @@ This guide explains what is in the repository, how the accounting system works, 
 |---|---|
 | `medici-banking.py` | Core Python implementation of the double-entry ledger |
 | `generate_historical_data.py` | Generates the initial 20,000-transaction dataset |
-| `generate_additional_data.py` | Expands the dataset to 80,000+ transactions and embeds a hidden fraud trail |
+| `generate_additional_data.py` | Expands the dataset to 80,000+ transactions |
 | `validate_transactions.py` | Validates that every transaction is balanced |
 | `demo_import_export.py` | Demonstrates loading and saving the ledger in CSV and JSON formats |
 | `demo_historical_data.py` | Loads and summarises the full historical dataset |
@@ -36,7 +36,6 @@ The dataset covers the period **1390–1440** and is distributed across eight br
 - War financing during the Florentine-Milanese Wars
 - Papal banking activity including the famous 35,000-florin ransom payment (1415)
 - Alum trade from papal monopoly mines
-- A **hidden embezzlement trail** embedded in the Florence branch operating expenses (1420–1424) for a forensic analysis exercise
 
 ---
 
@@ -240,13 +239,13 @@ Deliverable: An extended dashboard with both the network overview and per-branch
 
 ### Phase 8 — Forensic Exercise (Optional / Advanced)
 
-**Objective**: Use the data pipeline and dashboard to detect the hidden embezzlement scheme embedded in the dataset.
+**Objective**: Apply the data pipeline and dashboard to investigate potential fraud patterns in the dataset.
 
 Tasks:
 - Run your anomaly-detection pipeline against the full `medici_transactions.csv`.
 - Identify which branch, which supplier, and which date range are flagged by the highest number of rules.
-- Quantify the total amount and transaction count of the suspected fraud.
-- Prepare a brief written report (one page) summarising your findings, the detection methods that surfaced them, and at least two internal controls that would have prevented the scheme.
+- Quantify the total amount and transaction count of the suspected irregular activity.
+- Prepare a brief written report (one page) summarising your findings, the detection methods that surfaced them, and at least two internal controls that would have prevented the irregularities.
 
 Deliverable: Analysis notebook and a one-page fraud report.
 
